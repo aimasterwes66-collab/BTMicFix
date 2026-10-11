@@ -31,9 +31,12 @@ jobs:
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon
 
+      # The app module relocates its Gradle build dir to `build_tmp`
+      # (layout.buildDirectory.set(file("build_tmp"))), so the APK lands under
+      # build_tmp/outputs/apk/, NOT the default build/outputs/apk/.
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: BTMicFix-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          path: app/build_tmp/outputs/apk/debug/*.apk
           if-no-files-found: error
