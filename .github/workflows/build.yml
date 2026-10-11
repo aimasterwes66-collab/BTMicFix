@@ -20,14 +20,13 @@ jobs:
           distribution: temurin
           java-version: '17'
 
-      - name: Set up Android SDK (platform 34 + build-tools)
-        uses: android-actions/setup-android@v3
-
-      - name: Accept Android SDK licenses
-        run: yes | sdkmanager --licenses > /dev/null 2>&1 || true
-
       - name: Grant execute bit to wrapper
         run: chmod +x gradlew
+
+      # Use the Android SDK already preinstalled on the runner ($ANDROID_HOME,
+      # licenses pre-accepted). No sdkmanager step — it hangs on y/N prompts.
+      - name: Verify preinstalled SDK
+        run: echo "ANDROID_HOME=$ANDROID_HOME" && ls "$ANDROID_HOME/platforms" | tail -3 && ls "$ANDROID_HOME/build-tools" | tail -3
 
       - name: Build debug APK
         run: ./gradlew assembleDebug --no-daemon
